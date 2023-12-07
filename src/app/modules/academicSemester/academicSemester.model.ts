@@ -38,6 +38,20 @@ const academicSemesterSchema = new Schema<TAcademicSemester>(
   },
 );
 
+// MiddleWares
+// pre save middleware for checking if semester is already exits in DB with a same year
+
+academicSemesterSchema.pre('save', async function (next) {
+  const isSemesterExists = await AcademicSemester.findOne({
+    year: this.year,
+    name: this.name,
+  });
+  if (isSemesterExists) {
+    throw new Error('Semester is already Exits!');
+  }
+  next();
+});
+
 export const AcademicSemester = model<TAcademicSemester>(
   'AcademicSemester',
   academicSemesterSchema,
