@@ -21,7 +21,7 @@ const getAllAcademicSemester = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Students are retrieved successfully!',
+    message: 'Academic Semesters are retrieved successfully!',
     data: result,
   });
 });
@@ -35,7 +35,7 @@ const getSingleAcademicSemester = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Student is retrieved successfully!',
+    message: 'Academic Semester is retrieved successfully!',
     data: result,
   });
 });
@@ -53,7 +53,7 @@ const updateSingleAcademicSemester = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Student is retrieved successfully!',
+    message: 'Academic Semester is updated successfully!',
     data: result,
   });
 });
