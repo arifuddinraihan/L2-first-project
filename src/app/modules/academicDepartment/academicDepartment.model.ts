@@ -34,14 +34,14 @@ academicDepartment.pre('save', async function (next) {
 });
 
 // Check if department is not exist in the data when updating on database
-academicDepartment.pre('findOneAndUpdate', async function (next) {
-  const query = this.getQuery();
-  const isDepartmentExist = await AcademicDepartment.findOne(query);
-  if (!isDepartmentExist) {
-    throw new AppError(httpStatus.NOT_FOUND, 'This department dose not exist!');
-  }
-  next();
-});
+// academicDepartment.pre('findOneAndUpdate', async function (next) {
+//   const query = this.getQuery();
+//   const isDepartmentExist = await AcademicDepartment.findById(query);
+//   if (!isDepartmentExist) {
+//     throw new AppError(httpStatus.NOT_FOUND, 'This department dose not exist!');
+//   }
+//   next();
+// });
 
 export const AcademicDepartment = model<TAcademicDepartment>(
   'AcademicDepartment',

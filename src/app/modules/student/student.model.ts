@@ -6,6 +6,8 @@ import {
   TStudent,
   TUserName,
 } from './student.interface';
+import AppError from '../../errors/AppErrors';
+import httpStatus from 'http-status';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -177,6 +179,14 @@ studentSchema.pre('aggregate', function (next) {
   next();
 });
 
+// Check if student is not exist in the data when updating on database
+// studentSchema.pre('findOneAndUpdate', async function (next) {
+//   const query = this.getQuery();
+//   console.log(query);
+//   const checkIfQueryExist = await Student.findOne(query);
+//   console.log(checkIfQueryExist);
+//   next();
+// });
 //creating a custom static method
 studentSchema.statics.isUserExists = async function (id: string) {
   const existingUser = await Student.findOne({ id });

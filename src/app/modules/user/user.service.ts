@@ -34,7 +34,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     // Automatic user id
     userData.id = await generateStudentId(admissionSemester);
 
-    // Create New User (transection - 1) // in transection every data should be passed inside ARRAY
+    // Create New User (transection - 1) // in transection if its "create" operation it can take every data should be passed inside ARRAY
     const newUser = await User.create([userData], { session }); //userData inside array
     // If no user created sending error
     if (!newUser.length) {
