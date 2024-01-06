@@ -3,6 +3,7 @@ import { Student } from './student.model';
 import AppError from '../../errors/AppErrors';
 import httpStatus from 'http-status';
 import { User } from '../user/user.model';
+import { TStudent } from './student.interface';
 
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   // {email : { $regex : query.searchTerm, $option : i }}
@@ -10,7 +11,7 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   const studentSearchableFields = ['email', 'name.firstName', 'presentAddress'];
   let searchTerm = '';
   if (query?.searchTerm) {
-    searchTerm = query?.searchShema as string;
+    searchTerm = query?.searchTerm as string;
   }
 
   // Search Query
@@ -24,7 +25,7 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   const excludeFields = ['searchTerm'];
   excludeFields.forEach((element) => delete queryObj[element]);
 
-  // Get All Student accroding to search and filter query
+  // Get All Student according to search and filter query
   const result = await searchQuery
     .find(queryObj)
     .populate('admissionSemester')
@@ -46,6 +47,37 @@ const getSingleStudentFromDB = async (id: string) => {
         path: 'academicFaculty',
       },
     });
+  return result;
+};
+
+// Update A Student In DB
+const updateStudentIntoDB = async (id: string, payload: Partial<TStudent>) => {
+  const { name, localGuardian, guardian, ...restUpdatedStudentData } = payload;
+  const modifiedStudentData: Record<string, unknown> = {
+    ...restUpdatedStudentData,
+  };
+  if (name && Object.keys(name).length) {
+    for (const [key, value] of Object.entries(name)) {
+      modifiedStudentData[`name.${key}`] = value;
+    }
+  }
+
+  if (guardian && Object.keys(guardian).length) {
+    for (const [key, value] of Object.entries(guardian)) {
+      modifiedStudentData[`guardian.${key}`] = value;
+    }
+  }
+
+  if (localGuardian && Object.keys(localGuardian).length) {
+    for (const [key, value] of Object.entries(localGuardian)) {
+      modifiedStudentData[`localGuardian.${key}`] = value;
+    }
+  }
+
+  const result = await Student.findOneAndUpdate({ id }, modifiedStudentData, {
+    new: true,
+  });
+
   return result;
 };
 
@@ -88,5 +120,6 @@ const deleteStudentFromDB = async (id: string) => {
 export const StudentServices = {
   getAllStudentsFromDB,
   getSingleStudentFromDB,
+  updateStudentIntoDB,
   deleteStudentFromDB,
 };

@@ -1,11 +1,17 @@
 import express from 'express';
 import { StudentControllers } from './student.controller';
+import validateRequest from '../../middlewares/validation.Request';
+import { studentValidations } from './student.validation';
 
 const router = express.Router();
 
 router.get('/:studentId', StudentControllers.getSingleStudent);
 
-router.patch('/:studentId', StudentControllers.deleteStudent);
+router.patch(
+  '/:studentId',
+  validateRequest(studentValidations.updateStudentValidationSchema),
+  StudentControllers.updateStudent,
+);
 
 router.delete('/:studentId', StudentControllers.deleteStudent);
 
