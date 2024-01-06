@@ -52,10 +52,15 @@ const getSingleStudentFromDB = async (id: string) => {
 
 // Update A Student In DB
 const updateStudentIntoDB = async (id: string, payload: Partial<TStudent>) => {
+  // Separating non-primitive data types from payload
   const { name, localGuardian, guardian, ...restUpdatedStudentData } = payload;
+  
+  // making a copy of payload with only primitive data types
   const modifiedStudentData: Record<string, unknown> = {
     ...restUpdatedStudentData,
   };
+
+  // For non-primitive data types checking the length and settling properties in primitive types
   if (name && Object.keys(name).length) {
     for (const [key, value] of Object.entries(name)) {
       modifiedStudentData[`name.${key}`] = value;
@@ -74,6 +79,7 @@ const updateStudentIntoDB = async (id: string, payload: Partial<TStudent>) => {
     }
   }
 
+  // Updating Student with payload copied data in modifiedStudentData from above
   const result = await Student.findOneAndUpdate({ id }, modifiedStudentData, {
     new: true,
   });
