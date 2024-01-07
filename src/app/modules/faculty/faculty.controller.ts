@@ -27,11 +27,10 @@ const getSingleFaculty = catchAsync(async (req, res) => {
   });
 });
 
-// Update Student Controller
+// Update Faculty Controller
 const updateSingleFaculty = catchAsync(async (req, res) => {
   const { facultyId } = req.params;
   const { faculty } = req.body;
-  // console.log(studentId);
   const result = await FacultyServices.updateSingleFacultyIntoDB(
     facultyId,
     faculty,
@@ -45,11 +44,9 @@ const updateSingleFaculty = catchAsync(async (req, res) => {
   });
 });
 
-// Delete Student Controller
+// Delete Faculty Controller
 const deleteSingleFaculty = catchAsync(async (req, res) => {
   const { facultyId } = req.params;
-
-  // console.log(studentId);
   const result = await FacultyServices.deleteSingleFacultyFromDB(facultyId);
 
   sendResponse(res, {

@@ -91,14 +91,14 @@ const deleteSingleFacultyFromDB = async (id: string) => {
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
-    const deletedStudent = await Faculty.findOneAndUpdate(
+    const deletedFaculty = await Faculty.findOneAndUpdate(
       { id },
       { isDeleted: true },
       { new: true, session },
     );
     // console.log(deletedStudent);
 
-    if (!deletedStudent) {
+    if (!deletedFaculty) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete Faculty');
     }
 
@@ -114,7 +114,7 @@ const deleteSingleFacultyFromDB = async (id: string) => {
 
     await session.commitTransaction();
     await session.endSession();
-    return deletedStudent;
+    return deletedFaculty;
   } catch (err) {
     await session.abortTransaction();
     await session.endSession();

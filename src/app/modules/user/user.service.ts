@@ -6,6 +6,7 @@ import { Student } from '../student/student.model';
 import { TUser } from './user.interface';
 import { User } from './user.model';
 import {
+  generateAdminId,
   // generateAdminId,
   generateFacultyId,
   generateStudentId,
@@ -15,6 +16,7 @@ import httpStatus from 'http-status';
 import { TAcademicSemester } from '../academicSemester/academicSemester.interface';
 import { TFaculty } from '../faculty/faculty.interface';
 import { Faculty } from '../faculty/faculty.model';
+import { Admin } from '../admin/admin.model';
 
 // Create STUDENT from user data and setting the student ID as 2030010001 Demo
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
@@ -101,7 +103,7 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
     if (!newUser.length) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user');
     }
-    //set [id], [_id] as user in studentData
+    //set [id], [_id] as user in facultyData
     payload.id = newUser[0].id; // embedding id
     payload.user = newUser[0]._id; // reference _id
 
@@ -126,7 +128,59 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
   }
 };
 
+// Create ADMIN from user data and setting the admin ID as A-0001 Demo
+const createAdminIntoDB = async (password: string, payload: TFaculty) => {
+  // Create a user object
+  const userData: Partial<TUser> = {};
+
+  // If password not give then use default password
+  // set password as string as it is settled as string
+  userData.password = password || (config.default_password as string);
+
+  // setting user role to "student"
+  userData.role = 'admin';
+
+  // Creating RollBack Session from Mongoose
+  const session = await mongoose.startSession();
+
+  try {
+    // Starting RollBack Session
+    session.startTransaction();
+    // Automatic faculty user id
+    userData.id = await generateAdminId();
+
+    const newUser = await User.create([userData], { session }); //userData inside array
+    // If no user created sending error
+    if (!newUser.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user');
+    }
+    //set [id], [_id] as user in adminData
+    payload.id = newUser[0].id; // embedding id
+    payload.user = newUser[0]._id; // reference _id
+
+    // Create a Admin (transaction - 2)
+    const newAdmin = await Admin.create([payload], { session });
+    // If no student created sending error
+    if (!newAdmin.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create admin');
+    }
+
+    // Committing RollBack Session as session has passed the check
+    await session.commitTransaction();
+    // Ending RollBack Session as session has completed successfully
+    await session.endSession();
+    return newAdmin;
+  } catch (err) {
+    // Aborting RollBack Session as session has failed
+    await session.abortTransaction();
+    // Ending RollBack Session as session has completed unsuccessfully
+    await session.endSession();
+    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create faculty');
+  }
+};
+
 export const UserServices = {
   createStudentIntoDB,
   createFacultyIntoDB,
+  createAdminIntoDB,
 };

@@ -5,6 +5,7 @@ import { ManagementDepartmentController } from './managementDepartment.controlle
 
 const router = express();
 
+//
 router.post(
   '/create-management-department',
   validateRequest(
@@ -12,9 +13,20 @@ router.post(
   ),
   ManagementDepartmentController.createManagementDepartment,
 );
-router.get('/');
-router.get('/:managementDepartmentId');
-router.patch('/:managementDepartmentId');
-router.delete('/:managementDepartmentId');
+
+//
+router.get('/', ManagementDepartmentController.getAllManagementDepartments);
+
+//
+router.get(
+  '/:managementDepartmentId',
+  ManagementDepartmentController.getSingleManagementDepartment,
+);
+
+//
+router.patch(
+  '/:managementDepartmentId',
+  ManagementDepartmentController.updateSingleManagementDepartment,
+);
 
 export const ManagementDepartmentRoutes = router;
