@@ -40,12 +40,12 @@ const getAllFacultiesFromDB = async (query: Record<string, unknown>) => {
   return result;
 };
 
-const getSingleFacultyFromDB = async (id: string) => {
-  const isFacultyExists = await Faculty.isUserExists(id);
+const getSingleFacultyFromDB = async (_id: string) => {
+  const isFacultyExists = await Faculty.isUserExists(_id);
   if (!isFacultyExists) {
     throw new AppError(NOT_FOUND, 'Faculty never exists');
   }
-  const result = await Faculty.findOne({ id })
+  const result = await Faculty.findById(_id)
     .populate({
       path: 'academicDepartment',
       select: '-createdAt -updatedAt -_id -__v',

@@ -122,8 +122,8 @@ facultySchema.pre('aggregate', function (next) {
 });
 
 //creating a custom static method
-facultySchema.statics.isUserExists = async function (id: string) {
-  const existingUser = await Faculty.findOne({ id });
+facultySchema.statics.isUserExists = async function (_id: string) {
+  const existingUser = await Faculty.findById(_id);
   return existingUser;
 };
 

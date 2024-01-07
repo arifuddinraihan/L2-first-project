@@ -118,7 +118,7 @@ adminSchema.pre('aggregate', function (next) {
 
 //creating a custom static method
 adminSchema.statics.isUserExists = async function (id: string) {
-  const existingUser = await Admin.findOne({ id });
+  const existingUser = await Admin.findById(id);
   return existingUser;
 };
 

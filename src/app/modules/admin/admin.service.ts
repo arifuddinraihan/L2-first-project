@@ -28,32 +28,24 @@ const getAllAdminsFromDB = async (query: Record<string, unknown>) => {
   // Get All Admins according to Search Query and filter query
   const result = await searchQuery
     .find(queryObj)
-    // .populate({
-    //   path: 'academicDepartment',
-    //   select: '-createdAt -updatedAt -_id -__v',
-    //   populate: {
-    //     path: 'academicFaculty',
-    //     select: '-createdAt -updatedAt -_id -__v',
-    //   },
-    // })
+    .populate({
+      path: 'managementDepartment',
+      select: '-createdAt -updatedAt -_id -__v',
+    })
     .select('-isDeleted -_id');
   return result;
 };
 
-const getSingleAdminFromDB = async (id: string) => {
-  const isAdminExists = await Admin.isUserExists(id);
+const getSingleAdminFromDB = async (_id: string) => {
+  const isAdminExists = await Admin.isUserExists(_id);
   if (!isAdminExists) {
     throw new AppError(NOT_FOUND, 'Admin never exists');
   }
-  const result = await Admin.findOne({ id })
-    // .populate({
-    //   path: 'academicDepartment',
-    //   select: '-createdAt -updatedAt -_id -__v',
-    //   populate: {
-    //     path: 'academicFaculty',
-    //     select: '-createdAt -updatedAt -_id -__v',
-    //   },
-    // })
+  const result = await Admin.findById(_id)
+    .populate({
+      path: 'managementDepartment',
+      select: '-createdAt -updatedAt -_id -__v',
+    })
     .select('-isDeleted -_id');
   return result;
 };
