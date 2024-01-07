@@ -6,3 +6,10 @@ export type TUser = {
   status: 'in-progress' | 'blocked';
   isDeleted: boolean;
 };
+
+
+export type TUserName = {
+  firstName: string;
+  middleName: string;
+  lastName: string;
+};

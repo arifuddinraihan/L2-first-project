@@ -1,11 +1,6 @@
 import { Schema, model } from 'mongoose';
-import {
-  StudentModel,
-  TGuardian,
-  TLocalGuardian,
-  TStudent,
-} from './student.interface';
 import { TUserName } from '../user/user.interface';
+import { FacultyModel, TFaculty } from './faculty.interface';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -26,55 +21,7 @@ const userNameSchema = new Schema<TUserName>({
   },
 });
 
-const guardianSchema = new Schema<TGuardian>({
-  fatherName: {
-    type: String,
-    trim: true,
-    required: [true, 'Father Name is required'],
-  },
-  fatherOccupation: {
-    type: String,
-    trim: true,
-    required: [true, 'Father occupation is required'],
-  },
-  fatherContactNo: {
-    type: String,
-    required: [true, 'Father Contact No is required'],
-  },
-  motherName: {
-    type: String,
-    required: [true, 'Mother Name is required'],
-  },
-  motherOccupation: {
-    type: String,
-    required: [true, 'Mother occupation is required'],
-  },
-  motherContactNo: {
-    type: String,
-    required: [true, 'Mother Contact No is required'],
-  },
-});
-
-const localGuradianSchema = new Schema<TLocalGuardian>({
-  name: {
-    type: String,
-    required: [true, 'Name is required'],
-  },
-  occupation: {
-    type: String,
-    required: [true, 'Occupation is required'],
-  },
-  contactNo: {
-    type: String,
-    required: [true, 'Contact number is required'],
-  },
-  address: {
-    type: String,
-    required: [true, 'Address is required'],
-  },
-});
-
-const studentSchema = new Schema<TStudent, StudentModel>(
+const facultySchema = new Schema<TFaculty, FacultyModel>(
   {
     id: { type: String, required: [true, 'ID is required'], unique: true },
     user: {
@@ -82,6 +29,10 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       required: [true, 'User ID is required'],
       unique: true,
       ref: 'User',
+    },
+    designation: {
+      type: String,
+      required: [true, 'Designation is required'],
     },
     name: {
       type: userNameSchema,
@@ -125,31 +76,24 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       type: String,
       required: [true, 'Permanent address is required'],
     },
-    guardian: {
-      type: guardianSchema,
-      required: [true, 'Guardian information is required'],
-    },
-    localGuardian: {
-      type: localGuradianSchema,
-      required: [true, 'Local guardian information is required'],
-    },
     profileImg: { type: String },
     isDeleted: {
       type: Boolean,
       default: false,
-    },
-    admissionSemester: {
-      type: Schema.Types.ObjectId,
-      required: [true, 'Semester ID is required'],
-      ref: 'AcademicSemester',
     },
     academicDepartment: {
       type: Schema.Types.ObjectId,
       required: [true, 'Department ID is required'],
       ref: 'AcademicDepartment',
     },
+    academicFaculty: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'Academic Faculty is required'],
+      ref: 'AcademicFaculty',
+    },
   },
   {
+    timestamps: true,
     toJSON: {
       virtuals: true,
     },
@@ -157,38 +101,30 @@ const studentSchema = new Schema<TStudent, StudentModel>(
 );
 
 // virtual
-studentSchema.virtual('fullName').get(function () {
+facultySchema.virtual('fullName').get(function () {
   return `${this.name.firstName}  ${this.name.middleName}  ${this.name.lastName}`;
 });
 
 // Query Middleware
-studentSchema.pre('find', function (next) {
+facultySchema.pre('find', function (next) {
   this.find({ isDeleted: { $ne: true } });
   next();
 });
 
-studentSchema.pre('findOne', function (next) {
+facultySchema.pre('findOne', function (next) {
   this.find({ isDeleted: { $ne: true } });
   next();
 });
 
-studentSchema.pre('aggregate', function (next) {
+facultySchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
 });
 
-// Check if student is not exist in the data when updating on database
-// studentSchema.pre('findOneAndUpdate', async function (next) {
-//   const query = this.getQuery();
-//   console.log(query);
-//   const checkIfQueryExist = await Student.findOne(query);
-//   console.log(checkIfQueryExist);
-//   next();
-// });
 //creating a custom static method
-studentSchema.statics.isUserExists = async function (id: string) {
-  const existingUser = await Student.findOne({ id });
+facultySchema.statics.isUserExists = async function (id: string) {
+  const existingUser = await Faculty.findOne({ id });
   return existingUser;
 };
 
-export const Student = model<TStudent, StudentModel>('Student', studentSchema);
+export const Faculty = model<TFaculty, FacultyModel>('Faculty', facultySchema);
