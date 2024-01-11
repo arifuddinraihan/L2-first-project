@@ -1,11 +1,9 @@
 import { z } from 'zod';
 
 const preRequisiteCoursesValidationSchema = z.object({
-  course: z
-    .string({
-      invalid_type_error: 'course id must be string',
-    })
-    .optional(),
+  course: z.string({
+    invalid_type_error: 'course id must be string',
+  }),
   isDeleted: z.boolean().optional(),
 });
 
@@ -27,7 +25,10 @@ const createCourseValidationSchema = z.object({
       invalid_type_error: 'credits must be number',
       required_error: 'credits are required',
     }),
-    preRequisiteCourses: z.array(preRequisiteCoursesValidationSchema),
+    preRequisiteCourses: z
+      .array(preRequisiteCoursesValidationSchema)
+      .optional(),
+    isDeleted: z.boolean().optional(),
   }),
 });
 
@@ -60,6 +61,7 @@ const updateCourseValidationSchema = z.object({
     preRequisiteCourses: z
       .array(preRequisiteCoursesValidationSchema)
       .optional(),
+    isDeleted: z.boolean().optional(),
   }),
 });
 
